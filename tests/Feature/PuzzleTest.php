@@ -57,22 +57,27 @@ class PuzzleTest extends TestCase
 
     public function testLettersAreRemovedAfterSubmission()
     {
+        $puzzle = new Puzzle();
+        $puzzle->initial = $puzzle->remaining = 'ranfdomloetterxs';
+        $puzzle->save();
+
+        $puzzle2 = new Puzzle();
+        $puzzle2->remaining = 'randomletters';
+
         $this->instance(
             PuzzleServiceInterface::class,
-            Mockery::mock(PuzzleService::class, function (MockInterface $mock) {
-                $puzzle = new Puzzle();
-                $puzzle->initial = $puzzle->remaining = 'ranfdomloetterxs';
-                $mock->shouldReceive('createNewPuzzle')->once();
-                $mock->shouldReceive('submitWord')->once()->andReturn($puzzle);
+            Mockery::mock(PuzzleService::class, function (MockInterface $mock) use ($puzzle, $puzzle2) {
+                $mock->shouldReceive('createNewPuzzle')->once()->andReturn($puzzle);
+                $mock->shouldReceive('submitWord')->once()->andReturn(
+                    ["puzzle" => $puzzle2, "success" => true, "message" => "The submitted word have been accepted."]);
             })
         );
 
         $this->postJson('/api/new_puzzle', ["user_id" =>1]);
         $response = $this->postJson('/api/submit_word', ["puzzle_id" => 1, "word" => "fox"]);
-        //todo: fix this
         $response
-            ->assertStatus(201)
-            ->assertJsonPath('puzzle.remaining', 'randomletters');
+            ->assertStatus(200)
+            ->assertJsonPath('puzzle', 'randomletters');
     }
 
     public function testGameEndsAndShowsRemainingWords()

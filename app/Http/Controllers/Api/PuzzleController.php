@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreatePuzzleRequest;
 use App\Http\Requests\FinishPuzzleRequest;
 use App\Http\Requests\SubmitWordRequest;
-use App\Models\Puzzle;
 use App\Services\PuzzleServiceInterface;
 
 class PuzzleController extends Controller
