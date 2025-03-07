@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\JsonRequest;
-
 class SubmitWordRequest extends JsonRequest
 {
     public function authorize(): bool

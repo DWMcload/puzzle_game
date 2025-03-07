@@ -12,7 +12,7 @@ class DictionaryApi implements DictionaryApiInterface
 
     public function getRandomWord(): string {
         $url = "https://random-word-api.vercel.app/api?words=1";
-        $response = json_decod(@file_get_contents($url));
+        $response = json_decode(@file_get_contents($url));
         return $response[0];
     }
 }

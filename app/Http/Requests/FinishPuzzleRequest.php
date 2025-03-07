@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-class FinishPuzzleRequest
+class FinishPuzzleRequest extends JsonRequest
 {
     public function authorize(): bool
     {
