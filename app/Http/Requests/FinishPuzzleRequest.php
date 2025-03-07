@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Http\Requests;
+
 class FinishPuzzleRequest
 {
     public function authorize(): bool

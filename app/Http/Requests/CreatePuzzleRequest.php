@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Http\Requests;
+
 use App\Http\Requests\JsonRequest;
 
 class CreatePuzzleRequest extends JsonRequest

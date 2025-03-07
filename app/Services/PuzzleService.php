@@ -5,6 +5,10 @@ namespace App\Services;
 class PuzzleService implements PuzzleServiceInterface
 {
 
+    public function __construct(private readonly DictionaryApiInterface $dictionaryApi)
+    {
+    }
+
     function validateWordInDictionary(string $word): bool
     {
         // TODO: Implement validateWordInDictionary() method.
@@ -14,6 +18,7 @@ class PuzzleService implements PuzzleServiceInterface
     function createNewPuzzle(int $user_id): string
     {
         // TODO: Implement createNewPuzzle() method.
+        $puzzle = $this->generateRandomString(15);
         return '';
     }
 
@@ -27,4 +32,10 @@ class PuzzleService implements PuzzleServiceInterface
     {
         // TODO: Implement finishPuzzle() method.
     }
+
+    private function generateRandomString(int $length): string {
+        $letters = 'abcdefghijklmnopqrstuvwxyz';
+        return implode('', array_map(fn() => $letters[random_int(0, 25)], range(1, $length)));
+    }
+
 }
