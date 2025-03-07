@@ -66,27 +66,26 @@ class PuzzleService implements PuzzleServiceInterface
     function finishPuzzle(int $puzzle_id): array
     {
         $puzzle = Puzzle::findOrFail($puzzle_id);
-        $possibilities = $this->getPermutations($puzzle->remaining);
+        $validWords = [];
+        $this->getValidWordPermutations($puzzle->remaining, "", $validWords);
         //TODO: Check and add to High Scores if qualified
-        return ["puzzle" => $puzzle, "remaining_words" => $possibilities];
+        return ["puzzle" => $puzzle, "remaining_words" => $validWords];
     }
 
-    private function getPermutations(string $letters): array {
-        if (strlen($letters) <= 1) {
-            return [$letters];
+    private function getValidWordPermutations(string $letters, string $prefix = "", array &$validWords = []): void {
+        Log::info($prefix);
+        if ($prefix !== "" && $this->dictionaryApi->isValidWord($prefix)) {
+            $validWords[$prefix] = true;
         }
 
-        $permutations = [];
-        $letterArray = str_split($letters);
-
-        foreach ($letterArray as $index => $char) {
-            $remaining = substr($letters, 0, $index) . substr($letters, $index + 1);
-            foreach ($this->getPermutations($remaining) as $perm) {
-                $permutations[] = $char . $perm;
-            }
+        if (strlen($letters) === 0) {
+            return;
         }
 
-        return array_unique($permutations);
+        for ($i = 0; $i < strlen($letters); $i++) {
+            $remaining = substr($letters, 0, $i) . substr($letters, $i + 1);
+            $this->getValidWordPermutations($remaining, $prefix . $letters[$i], $validWords);
+        }
     }
 
     private function generateRandomString(int $length): string {
