@@ -1,66 +1,156 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
 
-## About Laravel
+## Arbor Education Test Task
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This submission contains my codebase for the task solution. It took way beyond the suggested 3 hours including system design and planning, therefore incomplete, but the produced code I believe is high quality.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Endpoints for Creating a Puzzle, sending a word solution and finishing the puzzle.
+- In the storage folder, there is a Puzzle Game.postman_collection.json file which contains the endpoints and example data in use with them
+- The leaderbord feature is missing, as it was out of the timeframe of this task - databases and initial tests were created for it
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Design Decisions and Difficulties
 
-## Learning Laravel
+I opted using Laravel as my framework as it seemed to be the nicest and cleanest way to develop this small application. 
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+I had to think about the valid English word validation until I found different API providers which can be used for this task. I use the most elegant, Dictionaryapi.dev for validation, but it does not support random word which I found required to provide at least one solvable word in each random string, so that is provided by a designated random word api. So basically the puzzle word is a random string of a certain number of characters and one random valid English word, shuffled together. Testing these results seems to be incredibly difficult and some kind of weighting or other solution probably should be used. In a real world scenario I would go back to the relevant stakeholders or product owners to discuss this feature and find a proper solution. The other option I consider is to generate the random string only from valid words. This will be important in the following problem.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Solving the task which says provide a list of possible words in the remaining puzzle text is incredible resource-hungry as a recursive permutation function have to run to determine them. I even replaced it with one which checks for valid English words only, but it still runs out of memory time. I submitted this code to showcase the thinking and the work behind it, but the proper way in my opinion here would be to change the specification to reduce the number of possibilities - either with using only real words as seed or some kind of weighting.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+The instructions do not require user handling, nor specifies if a single puzzle can be solved by different persons or not, so those were not taken into consideration. A fake user_id is required to create a puzzle, representing that a user handling mechanism could be applied there.
 
-## Laravel Sponsors
+## Setup Instructions
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+PHP 8.1+ & Composer are prerequisites.
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+First, install the package dependencies
 
-## Contributing
+```
+composer install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+You can either run the project with the in-built webserver, or in docker, I used the former for development:
 
-## Code of Conduct
+```
+php artisan serve
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Finally, run the migrations
 
-## Security Vulnerabilities
+```
+php artisan migrate:fresh
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Endpoints usage
 
-## License
+### Create New Puzzle
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```http
+POST /new_puzzle HTTP/1.1
+Host: localhost
+Content-Type: application/json
+```
+
+> ### Request form parameters
+
+| `user_id` | _integer_ <br>
+
+> ### Successful Response Example
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+
+{
+    "id": 1,
+    "puzzle": "ozrefibhrkdlaonrbpibpxeavlr"
+}
+```
+
+> ### Unsuccessful Response Example
+
+```http
+HTTP/1.1 422 OK
+Content-Type: application/json; charset=UTF-8
+
+{
+    "user_id": [
+        "The user id field is required."
+    ]
+}
+```
+
+### Submit new word solution
+
+```http
+POST /submit_word HTTP/1.1
+Host: localhost
+Content-Type: application/json
+```
+
+> ### Request form parameters
+
+| `puzzle_id` | _integer_, Existing puzzle ID <br>
+| `word` | _string_ <br>
+
+> ### Successful Response Example
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+
+{
+    "message": "The submitted word have been accepted.",
+    "puzzle": "ozfihrkdonrpibpxeavr",
+    "current_score": 7
+}
+```
+
+> ### Unsuccessful Response Example
+
+```http
+HTTP/1.1 422 OK
+Content-Type: application/json; charset=UTF-8
+
+{
+    "message": "The submitted word cannot be made from the puzzle string."
+}
+```
+
+### Finish puzzle
+
+```http
+POST /finish HTTP/1.1
+Host: localhost
+Content-Type: application/json
+```
+
+> ### Request form parameters
+
+| `puzzle_id` | _integer_, Existing puzzle ID <br>
+
+> ### Successful Response Example
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+
+{
+    "message": "The puzzle ended by the request of the user.",
+    "remaining_words": "toy boy fox box",
+    "final_score": 123
+}
+```
+
+> ### Unsuccessful Response Example
+
+```http
+HTTP/1.1 422 OK
+Content-Type: application/json; charset=UTF-8
+
+{
+    "puzzle_id": [
+        "The puzzle id field is required."
+    ]
+}
+```

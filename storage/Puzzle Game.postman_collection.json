@@ -1,0 +1,95 @@
+{
+	"info": {
+		"_postman_id": "9fee1df5-1b0a-4182-967f-f7207115e16d",
+		"name": "Puzzle Game",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1649199"
+	},
+	"item": [
+		{
+			"name": "New Puzzle",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{localUrl}}/new_puzzle",
+					"host": [
+						"{{localUrl}}"
+					],
+					"path": [
+						"new_puzzle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submit Word",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"puzzle_id\": 1,\n    \"word\": \"barbell\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{localUrl}}/submit_word",
+					"host": [
+						"{{localUrl}}"
+					],
+					"path": [
+						"submit_word"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Finish Puzzle",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"puzzle_id\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{localUrl}}/finish",
+					"host": [
+						"{{localUrl}}"
+					],
+					"path": [
+						"finish"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "localUrl",
+			"value": "http://127.0.0.1:8000/api",
+			"type": "default"
+		}
+	]
+}
